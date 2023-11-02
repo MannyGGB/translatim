@@ -19,10 +19,19 @@ app.get("/translate", async (request, response) => {
   const API = `https://api.mymemory.translated.net/get?q=${word}!&langpair=${from}|${to}`;
   const res = await axios.get(API);
 
+  const imageAPI = `https://api.unsplash.com/search/photos?client_id=${process.env.UNSPLASH_ACCESS_KEY}&query=${res.data.responseData.translatedText}`;
+  const resImage = await axios.get(imageAPI);
+
+  const gifAPI = `https://api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_ACCESS_KEY}&q=${res.data.responseData.translatedText}&limit=1&offset=0&rating=g&lang=en&bundle=messaging_non_clips`;
+  const resGif = await axios.get(gifAPI);
+
   const wrangledData = {
     translation: res.data.responseData.translatedText,
     match: res.data.responseData.match,
+    image: resImage.data.results[0].urls.regular,
+    gif: resGif.data.data[0].images.original.url,
   };
+
   response.json(wrangledData);
 });
 
