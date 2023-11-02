@@ -5,7 +5,7 @@ import { useState } from "react";
 function App() {
   //store out from and to languages in state
   const [from, setFrom] = useState("en");
-  const [to, setTo] = useState("en");
+  const [to, setTo] = useState("es");
 
   //store the word we want to translate in state
   const [word, setWord] = useState("");
@@ -21,7 +21,10 @@ function App() {
 
   async function handleTranslate(event) {
     event.preventDefault();
-    const API = `https://translatim-4f6e.onrender.com/translate?word=${word}&from=${from}&to=${to}`;
+    const API = `http://localhost:8080/translate?word=${word}&from=${from}&to=${to}`;
+    // `http://localhost:8080/translate?word=${word}&from=${from}&to=${to}`;
+    //const API = `https://translatim-4f6e.onrender.com/translate?word=${word}&from=${from}&to=${to}`;
+
     const res = await axios.get(API);
     setTranslation(res.data.translation);
     setImage(res.data.image);
@@ -30,8 +33,12 @@ function App() {
 
   return (
     <>
-      <form onSubmit={handleTranslate}>
-        <div className="container">
+      <header>
+        <h1>Translatim</h1>
+        <p>Visualise words around the world</p>
+      </header>
+      <main>
+        <form onSubmit={handleTranslate} className="input-container">
           <select onChange={(event) => setFrom(event.target.value)}>
             <option value="en">English</option>
             <option value="es">Spanish</option>
@@ -44,21 +51,25 @@ function App() {
             placeholder="Translate"
             onChange={(event) => setWord(event.target.value)}
           />
-        </div>
-        <div className="container">
+          <button>Submit</button>
+        </form>
+        <form className="output-container">
           <select onChange={(event) => setTo(event.target.value)}>
-            <option value="en">English</option>
             <option value="es">Spanish</option>
+            <option value="en">English</option>
             <option value="pl">Polish</option>
             <option value="tr">Turkish</option>
             <option value="ar">Arabic</option>
           </select>
-          <button>Submit</button>
-          <div className="output">{translation}</div>
+          <input readOnly value={translation} />
+        </form>
+        <div>
           <img src={image} />
-          <img src={gif} />
         </div>
-      </form>
+        <div>
+          <img className="gif" src={gif} />
+        </div>
+      </main>
     </>
   );
 }
